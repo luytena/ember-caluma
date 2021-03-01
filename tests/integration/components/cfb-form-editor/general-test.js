@@ -212,4 +212,41 @@ module("Integration | Component | cfb-form-editor/general", function (hooks) {
       .dom("input[name=slug] + span")
       .hasText("t:caluma.form-builder.validations.form.slug:()");
   });
+
+  test("it validates the slug length with no namespace", async function (assert) {
+    assert.expect(2);
+
+    await render(hbs`{{cfb-form-editor/general slug=null}}`);
+
+    await fillIn("input[name=slug]", "x".repeat(127));
+    await blur("input[name=slug]");
+
+    assert.dom("input[name=slug] + span").doesNotExist();
+
+    await fillIn("input[name=slug]", "x".repeat(128));
+    await blur("input[name=slug]");
+
+    assert
+      .dom("input[name=slug] + span")
+      .hasText("Slug is too long (maximum is 127 characters)");
+  });
+
+  test("it validates the slug length with namespace", async function (assert) {
+    assert.expect(2);
+
+    this.owner.lookup("service:caluma-options").namespace = "Foo Bar";
+    await render(hbs`{{cfb-form-editor/general slug=null}}`);
+
+    await fillIn("input[name=slug]", "x".repeat(119));
+    await blur("input[name=slug]");
+
+    assert.dom(".cfb-prefixed + span").doesNotExist();
+
+    await fillIn("input[name=slug]", "x".repeat(120));
+    await blur("input[name=slug]");
+
+    assert
+      .dom(".cfb-prefixed + span")
+      .hasText("Slug is too long (maximum is 119 characters)");
+  });
 });

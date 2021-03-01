@@ -102,6 +102,7 @@ export default Component.extend({
         {
           node: {
             label: "",
+            namespace: "",
             slug: "",
             description: "",
             isRequired: "false",
@@ -437,6 +438,7 @@ export default Component.extend({
     },
 
     updateSlug(value, changeset) {
+      changeset.set("namespace", this.prefix);
       changeset.set("slug", value);
       this.set("linkSlug", false);
 

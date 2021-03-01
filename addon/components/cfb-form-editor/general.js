@@ -37,6 +37,7 @@ export default Component.extend({
         {
           node: {
             name: "",
+            namespace: "",
             slug: "",
             description: "",
             isPublished: true,
@@ -140,6 +141,7 @@ export default Component.extend({
     },
 
     updateSlug(value, changeset) {
+      changeset.set("namespace", this.prefix);
       changeset.set("slug", value);
 
       this.validateSlug.perform(this.prefix + value, changeset);
